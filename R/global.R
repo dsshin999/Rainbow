@@ -4,7 +4,7 @@ library(dplyr)
 library(datasets)
 library(RCurl)
 
-x<-getURL("https://raw.githubusercontent.com/dsshin999/INputData/master/yejink/R/chart.csv")
+x<-getURL("https://raw.githubusercontent.com/dsshin999/Rainbow/master/R/chart.csv")
 dat<-read.csv(text=x, fileEncoding = "UTF-8")
 print(dat)
 experimental<-filter(dat, char=="experimental")
