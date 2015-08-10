@@ -43,11 +43,15 @@ Tab3. 개인 걸음수(Individual Strides)
 : 특정 개인의 보행수를 달 별로 비교할 수 있다.
 : 두 달을 각각 선택하고, 사람 이름을 선택하면 막대그래프로 그 사람의 특정 두 달의 보행수를 보여준다.
 
+
 Rstudio 설치
+
 : 분석툴을 프로그래밍, 수정, shinyapps에 deploy하기 위해서 컴퓨터에 Rstudio가 설치되어 있어야 한다.
 : https://www.rstudio.com/products/rstudio/download/ 에서 컴퓨터 버전에 따라 Rstudio program을 설치할 수 있다.
 
+
 만든 프로그램을 shinyapps.io에 deploy하는 방법
+
 : 만든 분석툴이 Rstudio에서만 되는 것이 아니라 웹에서 주소만 알면 툴을 사용할 수 있도록 하는 단계이다.
 1. http://www.shinyapps.io 에 접속하여 회원가입을 한다.
 2. 그 후 http://account.shinyapps.io 와 같이 앱의 주소를 설정한다.(account 부분에 자신이 원하는 이름을 넣으면 된다)
