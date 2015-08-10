@@ -69,10 +69,19 @@ Rstudio 설치
         그 경우 shinyapps::deployApp(‘path/to/your/app’, appname=‘~’) 으로 따로 앱이름을 설정해주면 된다.
   4. 한 번 shinyapps.io에 계정이 생성된 이후에는 rstudio에서 publish(스크립트창 우측 상단 run App 우측의 파란 아이콘) 하면 동일한 계정으로 deploy 된다.(단, 이 때 appname이 4글자 미만, 64글자 초과일 경우 validation error가 나므로 기준에 맞게 앱이름을 작성한다)
 
+github에서 클론 생성 
+
+:깃허브에서 데스크탑에 앱에 대한 내용을 클로닝하는 방법을 설명한다.
+  1. github.com에 들어가 계정을 생성한 후 https://github.com/dsshin999/Rainbow를 인터넷 웹페이지에 검색하여 사용할 분석툴이      저장되어 있는 페이지로 간다. 
+  2. 오른쪽 하단에 "Clone in Desktop" 을 클릭하여 github, repository 에 저장된 내용을 자신의 컴퓨터와 원격으로 공유할 있는       준비를 한다. 
+  3. Github window/Mac 이 설치되어 있지 않는 경우 다운로드를 받는다. 
+  4. Github 설치후 github계정을 등록하고 원하느 repository의 url 을 아까 "Clone in Desktop" 상단에 있는 
+    "https://github.com/dsshin999/Rainbow.git" 를 복사하여 clone의 경로로 설정해주고 PC에 원격으로 공유할 수 있는 폴더를         생성, 그 경로를 목적지로 설정하면 Github저장소와 PC의 저장소가 연결이 된다.
+  5. Github 프로그램의 PULL버튼 또는 Synch버튼으로 github.com에 있는 내용을 공유한다.
 
 Rstudio 실행방법
 
-: 깃헙에서 클로닝해서 데스크탑에 클로닝한 패키지에서 앱을 실행하는 방법을 설명한다.
+: 깃허브에서 클로닝해서 데스크탑에 클로닝한 패키지에서 앱을 실행하는 방법을 설명한다.
   1. Rstudio를 실행하고 우측 하단 박스에서 files에서 클로닝한 폴더를 연다.
   2. 폴더에서 ~.Rproj라고 쓰여진 파일을 클릭하면 컴퓨터 Rstudio에 해당 프로젝트가 생성된다.
   3. R 폴더에 들어가 server.R 파일 혹은 ui.R 파일을 연다.
