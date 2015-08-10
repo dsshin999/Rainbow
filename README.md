@@ -43,3 +43,24 @@ Tab3. 개인 걸음수(Individual Strides)
 : 특정 개인의 보행수를 달 별로 비교할 수 있다.
 : 두 달을 각각 선택하고, 사람 이름을 선택하면 막대그래프로 그 사람의 특정 두 달의 보행수를 보여준다.
 
+Rstudio 설치
+: 분석툴을 프로그래밍, 수정, shinyapps에 deploy하기 위해서 컴퓨터에 Rstudio가 설치되어 있어야 한다.
+: https://www.rstudio.com/products/rstudio/download/ 에서 컴퓨터 버전에 따라 Rstudio program을 설치할 수 있다.
+
+만든 프로그램을 shinyapps.io에 deploy하는 방법
+: 만든 분석툴이 Rstudio에서만 되는 것이 아니라 웹에서 주소만 알면 툴을 사용할 수 있도록 하는 단계이다.
+1. http://www.shinyapps.io 에 접속하여 회원가입을 한다.
+2. 그 후 http://account.shinyapps.io 와 같이 앱의 주소를 설정한다.(account 부분에 자신이 원하는 이름을 넣으면 된다)
+3. 자신이 Rstudio에서 콘솔창에 다음과 같은 명령어들을 입력한다.
+  install.packages(‘devtools’)
+  devtools::install_github(‘rstudio/shinyapps’)
+  shinyapps::setAccoutInfo(name=‘위에서 설정한 계정명’
+                                         token=‘~’
+                                         secret=‘~’)
+    //shinyapps 홈페이지 안내창에서 name, token, secret에 할당되는 것들을 알려준다.
+  library(shinyapps)
+  shinyapps::deployApp(‘path/to/your/app’)
+    //여기서 path/to/your/app이란 앱으로 만들고 싶은 server.R, ui.R 파일이 있는 폴더 경로를 입력하면 된다.    
+    //보통 경로의 마지막 이름을 가지고 앱이름을 설정하는데, 마지막 이름이 짧다면 deploy 에러가 난다.
+      그 경우 shinyapps::deployApp(‘path/to/your/app’, appname=‘~’) 으로 따로 앱이름을 설정해주면 된다.
+4. 한 번 shinyapps.io에 계정이 생성된 이후에는 rstudio에서 publish(스크립트창 우측 상단 run App 우측의 파란 아이콘) 하면 동일한 계정으로 deploy 된다.(단, 이 때 appname이 4글자 미만, 64글자 초과일 경우 validation error가 나므로 기준에 맞게 앱이름을 작성한다)
