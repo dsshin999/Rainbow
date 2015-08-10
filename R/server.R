@@ -28,7 +28,6 @@ shinyServer(function(input, output){
   #기간별 평균 걸음수 비교
   output$plot2 <- renderPlot({
     month<-c(input$month1, input$month2)
-    print(experimental)
     stride<-c(monthly[,input$month1], monthly[,input$month2])
     mont<-data.frame(month,stride)
     h<-ggplot(mont, aes(x=month, y=stride)) + geom_bar(stat="identity", postiion="dodge", fill="light steel blue", width=0.1)+theme_bw()
