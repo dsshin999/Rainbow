@@ -68,3 +68,18 @@ Rstudio 설치
       //보통 경로의 마지막 이름을 가지고 앱이름을 설정하는데, 마지막 이름이 짧다면 deploy 에러가 난다.
         그 경우 shinyapps::deployApp(‘path/to/your/app’, appname=‘~’) 으로 따로 앱이름을 설정해주면 된다.
   4. 한 번 shinyapps.io에 계정이 생성된 이후에는 rstudio에서 publish(스크립트창 우측 상단 run App 우측의 파란 아이콘) 하면 동일한 계정으로 deploy 된다.(단, 이 때 appname이 4글자 미만, 64글자 초과일 경우 validation error가 나므로 기준에 맞게 앱이름을 작성한다)
+
+
+Rstudio 실행방법
+
+: 깃헙에서 클로닝해서 데스크탑에 클로닝한 패키지에서 앱을 실행하는 방법을 설명한다.
+  1. Rstudio를 실행하고 우측 하단 박스에서 files에서 클로닝한 폴더를 연다.
+  2. 폴더에서 ~.Rproj라고 쓰여진 파일을 클릭하면 컴퓨터 Rstudio에 해당 프로젝트가 생성된다.
+  3. R 폴더에 들어가 server.R 파일 혹은 ui.R 파일을 연다.
+  4. 좌측 상단에 스크립트 창이 생기고 스크립트창의 우측 상단에 초록색 삼각형과 Run App 버튼이 있다.
+    - Run App 하부 메뉴를 여는 작은 검은 삼각형을 클릭하면 앱을 어디에서 열 것인지 설정할 수 있다.
+    - Run in Window : Rstudio에서 새 창을 열어 앱 실행
+    - Run in Viewer Pane : 좌측 하단 Viewer창에서 실행
+    - Run in External : 인터넷 창을 열어 즉, Rstudio 외부에서 실행
+  5. 앱을 중지하고 싶으면 Rstudio의 좌측 하단 콘솔 창 우측 상단의 빨간 팔각형 stop버튼을 누른다
+    - Run in Window로 실행한 경우 창을 닫으면 중지된다.
