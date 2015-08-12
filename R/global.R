@@ -4,22 +4,22 @@ library(dplyr)
 library(datasets)
 library(RCurl)
 library(RMySQL)
-con<-dbConnect(MySQL(), dbname="nursingsvc", username="admin", password="akstp123", host="puppet.rainbow-wireless.com", port=3336)
+con<-dbConnect(dbDriver("MySQL"), dbname="nursingsvc", username="admin", password="akstp123", host="192.168.1.131", port=3306)
 dbGetQuery(con, "SET NAMES 'utf8'")
-dat<-dbReadTable(con, "chart")
-dbDisconnect(con)
+#dat<-dbReadTable(con, "chart")
+#dbDisconnect(con)
 
 #실험군을 나이별로 분류해서 total.age에 저장하는 코드
-experimental<-filter(dat, char=="experimental")
-experimental.50<-filter(experimental, age<60)
-experimental.60<-filter(experimental, age>=60, age<70)
-experimental.70<-filter(experimental, age>=70, age<80)
-experimental.over<-filter(experimental, age>=80)
-comparison<-filter(dat, char=="comparison")
-comparison.50<-filter(comparison, age<60)
-comparison.60<-filter(comparison, age>=60, age<70)
-comparison.70<-filter(comparison, age>=70, age<80)
-comparison.over<-filter(comparison, age>=80)
+#experimental<-filter(dat, char=="experimental")
+#experimental.50<-filter(experimental, age<60)
+#experimental.60<-filter(experimental, age>=60, age<70)
+#experimental.70<-filter(experimental, age>=70, age<80)
+#experimental.over<-filter(experimental, age>=80)
+#comparison<-filter(dat, char=="comparison")
+#comparison.50<-filter(comparison, age<60)
+#comparison.60<-filter(comparison, age>=60, age<70)
+#comparison.70<-filter(comparison, age>=70, age<80)
+#comparison.over<-filter(comparison, age>=80)
 
 
 aver.ex.50<-summarise(experimental.50, aver_bf.eq=mean(bf.eq5d), aver_bf.gh=mean(bf.gh), aver_bf.mr=mean(bf.mr), aver_bf.vt=mean(bf.vt), aver_bf.st=mean(bf.strides), aver_af.eq=mean(af.eq5d), aver_af.gh=mean(af.gh), aver_af.mr=mean(af.mr), aver_af.vt=mean(af.vt), aver_af.st=mean(af.strides))
@@ -91,11 +91,14 @@ total.ill$diff.eq<-diff.eq5d
 total.ill$diff.mr<-diff.mr
 
 #실험군 사람들 추출, 월별 평균 내기
-experimental<-filter(dat, char=="experimental")
-monthly<-summarise(experimental, month1=mean(m1),month2=mean(m2),month3=mean(m3),month4=mean(m4),month5=mean(m5),month6=mean(m6),month7=mean(m7),month8=mean(m8),month9=mean(m9),month10=mean(m10),month11=mean(m11),month12=mean(m12))
+#experimental<-filter(dat, char=="experimental")
+#monthly<-summarise(experimental, month1=mean(m1),month2=mean(m2),month3=mean(m3),month4=mean(m4),month5=mean(m5),month6=mean(m6),month7=mean(m7),month8=mean(m8),month9=mean(m9),month10=mean(m10),month11=mean(m11),month12=mean(m12))
 
 #지표 추출
-index <- colnames(total.age)
+index <- c("eq5d", "stride", "pr","mr","vt","gh")
 
 #사람 이름 추출하여 벡터로 저장
 personname <- as.vector(dat[,1])
+
+#측정횟수 계산
+maximum<-max(dbGetQuery(con, "SELECT measuretime FROM chart2"))

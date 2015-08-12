@@ -14,7 +14,9 @@ navbarPage("Tools for Analyzing Patients Status",
                     sidebarPanel(
                       selectInput("x", "Please Select x-axix", choices=c("age", "illness")),
                       selectInput("y", "indexes", index),
-                      selectInput("color", "Seperation", c("None", "char"))
+                      selectInput("color", "Seperation", c("None", "char")),
+                      selectInput("from", "Period, from :", c(1:maximum)), #추릴 기간 선정
+                      selectInput("to", "Period, to :", c(1:maximum))
                     ),
                     
                     mainPanel(

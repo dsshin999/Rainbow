@@ -9,15 +9,86 @@ shinyServer(function(input, output){
 
     
     if(input$x == "age")
-    {
+    {#입력받은 사항에 따라 db에서 데이터를 읽어와서 그래프를 뿌린다.
+      dat<-dbGetQuery(con, "SELECT spec, input$x, input$y FROM chart WHERE measuretime>=input$from AND measuretime<=input$to")
+      experimental<-filter(dat, spec=="experimental")
+      experimental.50<-filter(experimental, age<60)
+      experimental.60<-filter(experimental, age>=60, age<70)
+      experimental.70<-filter(experimental, age>=70, age<80)
+      experimental.over<-filter(experimental, age>=80)
+      comparison<-filter(dat, spec=="comparison")
+      comparison.50<-filter(comparison, age<60)
+      comparison.60<-filter(comparison, age>=60, age<70)
+      comparison.70<-filter(comparison, age>=70, age<80)
+      comparison.over<-filter(comparison, age>=80)
+      
+      
+      aver.ex.50<-summarise(experimental.50, aver_bf.eq=mean(input$y))
+      aver.ex.60<-summarise(experimental.60, aver_bf.eq=mean(input$y))
+      aver.ex.70<-summarise(experimental.70, aver_bf.eq=mean(input$y))
+      aver.ex.over<-summarise(experimental.over, aver_bf.eq=mean(input$y))
+      
+      
+      aver.cp.50<-summarise(comparison.50, aver_bf.eq=mean(input$y))
+      aver.cp.60<-summarise(comparison.60, aver_bf.eq=mean(input$y))
+      aver.cp.70<-summarise(comparison.70, aver_bf.eq=mean(input$y))
+      aver.cp.over<-summarise(comparison.over, aver_bf.eq=mean(input$y))
+      
+      age<-c(50, 60, 70, 80)
+      aver.cp<-rbind(aver.cp.50,aver.cp.60,aver.cp.70,aver.cp.over)
+      aver.cp$age<-age
+      
+      aver.ex<-rbind(aver.ex.50,aver.ex.60,aver.ex.70,aver.ex.over)
+      aver.ex$age<-age
+      
+      char<-c("comparison", "comparison", "comparison", "comparison")
+      aver.cp$char<-char
+      char<-c("experimental", "experimental","experimental","experimental")
+      aver.ex$char<-char
+      total.age<-rbind(aver.cp, aver.ex)
+      names(total.age)[1]<-input$y
+      
       p<- ggplot(total.age, aes_string(input$x, input$y)) + geom_bar(width=3, stat="identity", position="dodge")+theme_bw()
       
       if(input$color != "None")
-      {p<-p+aes_string(fill=input$color)}
+      {
+        
+        p<-p+aes_string(fill=input$color)}
       
       print(p)
     }
     else{
+      dat<-dbGetQuery(con, "SELECT spec, input$x, input$y FROM chart WHERE measuretime>=input$from AND measuretime<=input$to")
+      experimental<-filter(dat, char=="experimental")
+      experimental.a<-filter(experimental, illness=="A") #질병1
+      experimental.b<-filter(experimental, illness=="B") #질병2
+      experimental.c<-filter(experimental, illness=="C") #질병3
+      comparison<-filter(dat, char=="comparison")
+      comparison.a<-filter(comparison, illness=="A") #질병1
+      comparison.b<-filter(comparison, illness=="B") #질병2
+      comparison.c<-filter(comparison, illness=="C") #질병3
+      
+      aver.ex.a<-summarise(experimental.a, aver_bf.eq=mean(input$y))
+      aver.ex.b<-summarise(experimental.b, aver_bf.eq=mean(input$y))
+      aver.ex.c<-summarise(experimental.c, aver_bf.eq=mean(input$y))
+      
+      aver.cp.a<-summarise(comparison.a, aver_bf.eq=mean(input$y))
+      aver.cp.b<-summarise(comparison.b, aver_bf.eq=mean(input$y))
+      aver.cp.c<-summarise(comparison.c, aver_bf.eq=mean(input$y))
+      
+      
+      aver.cp<-rbind(aver.cp.a,aver.cp.b,aver.cp.c)
+      aver.cp$illness<-c("A","B","C")
+      aver.cp
+      aver.ex<-rbind(aver.ex.a,aver.ex.b,aver.ex.c)
+      aver.ex$illness<-c("A","B","C")
+      
+      char<-c("comparison", "comparison", "comparison")
+      aver.cp$char<-char
+      char<-c("experimental", "experimental","experimental")
+      aver.ex$char<-char
+      total.ill<-rbind(aver.cp, aver.ex)
+      names(total.age)[1]<-input$y
       p<- ggplot(total.ill, aes_string(x=input$x, y=input$y)) + geom_bar(width=.3, stat="identity", position="dodge") + theme_bw()
       if(input$color != "None")
       {p<-p+aes_string(fill=input$color) }
