@@ -1,8 +1,8 @@
 name: Rstudy
 account: analyzingtool
 server: shinyapps.io
-bundleId: 235727
+bundleId: 237715
 url: https://analyzingtool.shinyapps.io/RStudy
-when: 1439183397.84514
+when: 1439359168.59486
 asMultiple: FALSE
 asStatic: FALSE
