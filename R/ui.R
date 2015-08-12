@@ -28,8 +28,8 @@ navbarPage("Tools for Analyzing Patients Status",
                     headerPanel("Comparing Strides along to month"),
                     
                     sidebarPanel(
-                      selectInput("month1", "select month", choices=c("month1",  "month2",  "month3",  "month4",  "month5",  "month6",  "month7",  "month8",  "month9",  "month10", "month11", "month12")),
-                      selectInput("month2", "select month2", choices=c("month1",  "month2",  "month3",  "month4",  "month5",  "month6",  "month7",  "month8",  "month9",  "month10", "month11", "month12"))
+                      selectInput("month1", "select month", choices=c(1:maximum)),
+                      selectInput("month2", "select month2", choices=c(1:maximum))
                     ),
                     
                     mainPanel(
@@ -43,7 +43,8 @@ navbarPage("Tools for Analyzing Patients Status",
                     sidebarPanel(
                       selectInput("month3", "select month", choices=c("month1",  "month2",  "month3",  "month4",  "month5",  "month6",  "month7",  "month8",  "month9",  "month10", "month11", "month12")),
                       selectInput("month4", "select month", choices=c("month1",  "month2",  "month3",  "month4",  "month5",  "month6",  "month7",  "month8",  "month9",  "month10", "month11", "month12")),
-                      selectInput("names", "Name : ", c("None", personname))
+                      selectInput("names", "Name : ", c("None", personname)),
+                      selectInput("value", "Index :", index)
                     ),
                     
                     

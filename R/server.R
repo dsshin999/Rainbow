@@ -3,6 +3,7 @@ library(dplyr)
 library(ggplot2)
 library(datasets)
 library(RCurl)
+library(RMySQL)
 
 shinyServer(function(input, output){
   output$plot <- renderPlot({
@@ -79,7 +80,6 @@ shinyServer(function(input, output){
       
       aver.cp<-rbind(aver.cp.a,aver.cp.b,aver.cp.c)
       aver.cp$illness<-c("A","B","C")
-      aver.cp
       aver.ex<-rbind(aver.ex.a,aver.ex.b,aver.ex.c)
       aver.ex$illness<-c("A","B","C")
       
@@ -88,7 +88,7 @@ shinyServer(function(input, output){
       char<-c("experimental", "experimental","experimental")
       aver.ex$char<-char
       total.ill<-rbind(aver.cp, aver.ex)
-      names(total.age)[1]<-input$y
+      names(total.ill)[1]<-input$y
       p<- ggplot(total.ill, aes_string(x=input$x, y=input$y)) + geom_bar(width=.3, stat="identity", position="dodge") + theme_bw()
       if(input$color != "None")
       {p<-p+aes_string(fill=input$color) }
@@ -98,22 +98,25 @@ shinyServer(function(input, output){
   
   #기간별 평균 걸음수 비교
   output$plot2 <- renderPlot({
-    month<-c(input$month1, input$month2)
-    stride<-c(monthly[,input$month1], monthly[,input$month2])
-    mont<-data.frame(month,stride)
-    h<-ggplot(mont, aes(x=month, y=stride)) + geom_bar(stat="identity", postiion="dodge", fill="light steel blue", width=0.1)+theme_bw()
+    dat<-dbGetQuery(con, "SELECT stride, measure.time FROM chart WHERE measure.time=input$month1 OR measure.time=input$month2 AND spec='experimental'")
+    type1<-filter(dat1, measure.time==input$month1)
+    type2<-filter(dat1, measure.time==input$month2)
+    sum1<-summarise(type1, strides=mean(stride))
+    sum2<-summarise(type2, strides=mean(stride))
+    sum<-rbind(sum1, sum2)
+    time<-c(1,2)
+    monthly<-data.frame(sum, time)
+    
+    h<-ggplot(monthly, aes(x=time, y=strides)) + geom_bar(stat="identity", postiion="dodge", fill="light steel blue", width=0.1)+theme_bw()
     print(h)
   })
   
   output$plot3 <- renderPlot({
     if(input$names != "None")
     {
-      people<-filter(experimental,name==input$names)
-      persons<-summarise(people, month1=mean(m1),month2=mean(m2),month3=mean(m3),month4=mean(m4),month5=mean(m5),month6=mean(m6),month7=mean(m7),month8=mean(m8),month9=mean(m9),month10=mean(m10),month11=mean(m11),month12=mean(m12))
-      month<-c(input$month3, input$month4)
-      stride<-c(persons[,input$month3], persons[,input$month4])
-      mont<-data.frame(month,stride)
-      k<-ggplot(mont, aes(x=month, y=stride)) + geom_bar(stat="identity", positiion="dodge", fill="light steel blue", width=0.1)+theme_bw()
+      dat<-dbGetQuery(con, "SELECT input$value, measure.time FROM chart WHERE measure.time=input$month3 OR measure.time=input$month4 AND name=input$names")
+      
+      k<-ggplot(dat, aes(x=measure.time, y=input$value)) + geom_bar(stat="identity", positiion="dodge", fill="light steel blue", width=0.1)+theme_bw()+xlab("times")
       print(k)
     }
   })})
