@@ -7,16 +7,35 @@ library(RMySQL)
 
 shinyServer(function(input, output){
   output$plot <- renderPlot({
-
+    
     
     if(input$x == "age")
     {#입력받은 사항에 따라 db에서 데이터를 읽어와서 그래프를 뿌린다.
-      dat<-dbGetQuery(con, "SELECT spec, input$x, input$y FROM chart WHERE measuretime>=input$from AND measuretime<=input$to")
+      
+      if(input$y == "stride")
+      {dat<-dbGetQuery(con, "SELECT spec, age, stride FROM chart")}
+      else if(input$y == "eq5d")
+      {dat<-dbGetQuery(con, "SELECT spec, age, eq5d FROM chart")}
+      else if(input$y == "pr")
+      {dat<-dbGetQuery(con, "SELECT spec, age, pr FROM chart")}
+      else if(input$y == "mr")
+      {dat<-dbGetQuery(con, "SELECT spec, age, mr FROM chart")}
+      else if(input$y == "gh")
+      {dat<-dbGetQuery(con, "SELECT spec, age, gh FROM chart")}
+      else if(input$y == "vt")
+      {dat<-dbGetQuery(con, "SELECT spec, age, vt FROM chart")}
+      
+      
       experimental<-filter(dat, spec=="experimental")
       experimental.50<-filter(experimental, age<60)
+      print(experimental.50)
       experimental.60<-filter(experimental, age>=60, age<70)
+      print(experimental.60)
       experimental.70<-filter(experimental, age>=70, age<80)
+      print(experimental.70)
       experimental.over<-filter(experimental, age>=80)
+      
+      
       comparison<-filter(dat, spec=="comparison")
       comparison.50<-filter(comparison, age<60)
       comparison.60<-filter(comparison, age>=60, age<70)
@@ -24,16 +43,78 @@ shinyServer(function(input, output){
       comparison.over<-filter(comparison, age>=80)
       
       
-      aver.ex.50<-summarise(experimental.50, aver_bf.eq=mean(input$y))
-      aver.ex.60<-summarise(experimental.60, aver_bf.eq=mean(input$y))
-      aver.ex.70<-summarise(experimental.70, aver_bf.eq=mean(input$y))
-      aver.ex.over<-summarise(experimental.over, aver_bf.eq=mean(input$y))
-      
-      
-      aver.cp.50<-summarise(comparison.50, aver_bf.eq=mean(input$y))
-      aver.cp.60<-summarise(comparison.60, aver_bf.eq=mean(input$y))
-      aver.cp.70<-summarise(comparison.70, aver_bf.eq=mean(input$y))
-      aver.cp.over<-summarise(comparison.over, aver_bf.eq=mean(input$y))
+      if(input$y=="eq5d")
+      {
+        aver.ex.50<-summarise(experimental.50, aver_bf.eq=mean(eq5d))
+        aver.ex.60<-summarise(experimental.60, aver_bf.eq=mean(eq5d))
+        aver.ex.70<-summarise(experimental.70, aver_bf.eq=mean(eq5d))
+        aver.ex.over<-summarise(experimental.over, aver_bf.eq=mean(eq5d))
+        
+        aver.cp.50<-summarise(comparison.50, aver_bf.eq=mean(eq5d))
+        aver.cp.60<-summarise(comparison.60, aver_bf.eq=mean(eq5d))
+        aver.cp.70<-summarise(comparison.70, aver_bf.eq=mean(eq5d))
+        aver.cp.over<-summarise(comparison.over, aver_bf.eq=mean(eq5d))
+      }
+      else if(input$y==stride)
+      {
+        aver.ex.50<-summarise(experimental.50, aver_bf.eq=mean(stride))
+        aver.ex.60<-summarise(experimental.60, aver_bf.eq=mean(stride))
+        aver.ex.70<-summarise(experimental.70, aver_bf.eq=mean(stride))
+        aver.ex.over<-summarise(experimental.over, aver_bf.eq=mean(stride))
+        
+        aver.cp.50<-summarise(comparison.50, aver_bf.eq=mean(stride))
+        aver.cp.60<-summarise(comparison.60, aver_bf.eq=mean(stride))
+        aver.cp.70<-summarise(comparison.70, aver_bf.eq=mean(stride))
+        aver.cp.over<-summarise(comparison.over, aver_bf.eq=mean(stride))
+      }
+      else if(input$y==pr)
+      {
+        aver.ex.50<-summarise(experimental.50, aver_bf.eq=mean(pr))
+        aver.ex.60<-summarise(experimental.60, aver_bf.eq=mean(pr))
+        aver.ex.70<-summarise(experimental.70, aver_bf.eq=mean(pr))
+        aver.ex.over<-summarise(experimental.over, aver_bf.eq=mean(pr))
+        
+        aver.cp.50<-summarise(comparison.50, aver_bf.eq=mean(pr))
+        aver.cp.60<-summarise(comparison.60, aver_bf.eq=mean(pr))
+        aver.cp.70<-summarise(comparison.70, aver_bf.eq=mean(pr))
+        aver.cp.over<-summarise(comparison.over, aver_bf.eq=mean(pr))
+      }
+      else if(input$y==mr)
+      {
+        aver.ex.50<-summarise(experimental.50, aver_bf.eq=mean(mr))
+        aver.ex.60<-summarise(experimental.60, aver_bf.eq=mean(mr))
+        aver.ex.70<-summarise(experimental.70, aver_bf.eq=mean(mr))
+        aver.ex.over<-summarise(experimental.over, aver_bf.eq=mean(mr))
+        
+        aver.cp.50<-summarise(comparison.50, aver_bf.eq=mean(mr))
+        aver.cp.60<-summarise(comparison.60, aver_bf.eq=mean(mr))
+        aver.cp.70<-summarise(comparison.70, aver_bf.eq=mean(mr))
+        aver.cp.over<-summarise(comparison.over, aver_bf.eq=mean(mr))
+      }
+      else if(input$y==vt)
+      {
+        aver.ex.50<-summarise(experimental.50, aver_bf.eq=mean(vt))
+        aver.ex.60<-summarise(experimental.60, aver_bf.eq=mean(vt))
+        aver.ex.70<-summarise(experimental.70, aver_bf.eq=mean(vt))
+        aver.ex.over<-summarise(experimental.over, aver_bf.eq=mean(vt))
+        
+        aver.cp.50<-summarise(comparison.50, aver_bf.eq=mean(vt))
+        aver.cp.60<-summarise(comparison.60, aver_bf.eq=mean(vt))
+        aver.cp.70<-summarise(comparison.70, aver_bf.eq=mean(vt))
+        aver.cp.over<-summarise(comparison.over, aver_bf.eq=mean(vt))
+      }
+      else if(input$y==gh)
+      {
+        aver.ex.50<-summarise(experimental.50, aver_bf.eq=mean(gh))
+        aver.ex.60<-summarise(experimental.60, aver_bf.eq=mean(gh))
+        aver.ex.70<-summarise(experimental.70, aver_bf.eq=mean(gh))
+        aver.ex.over<-summarise(experimental.over, aver_bf.eq=mean(gh))
+        
+        aver.cp.50<-summarise(comparison.50, aver_bf.eq=mean(gh))
+        aver.cp.60<-summarise(comparison.60, aver_bf.eq=mean(gh))
+        aver.cp.70<-summarise(comparison.70, aver_bf.eq=mean(gh))
+        aver.cp.over<-summarise(comparison.over, aver_bf.eq=mean(gh))
+      }
       
       age<-c(50, 60, 70, 80)
       aver.cp<-rbind(aver.cp.50,aver.cp.60,aver.cp.70,aver.cp.over)
@@ -48,6 +129,8 @@ shinyServer(function(input, output){
       aver.ex$char<-char
       total.age<-rbind(aver.cp, aver.ex)
       names(total.age)[1]<-input$y
+      print("total.age")
+      print(total.age)
       
       p<- ggplot(total.age, aes_string(input$x, input$y)) + geom_bar(width=3, stat="identity", position="dodge")+theme_bw()
       
@@ -59,7 +142,19 @@ shinyServer(function(input, output){
       print(p)
     }
     else{
-      dat<-dbGetQuery(con, "SELECT spec, input$x, input$y FROM chart WHERE measuretime>=input$from AND measuretime<=input$to")
+      if(input$y==stride)
+      {dat<-dbGetQuery(con, "SELECT spec, illness, stride FROM chart")}
+      else if(input$y==eq5d)
+      {dat<-dbGetQuery(con, "SELECT spec, illness, eq5d FROM chart")}
+      else if(input$y==pr)
+      {dat<-dbGetQuery(con, "SELECT spec, illness, pr FROM chart")}
+      else if(input$y==mr)
+      {dat<-dbGetQuery(con, "SELECT spec, illness, mr FROM chart")}
+      else if(input$y==vt)
+      {dat<-dbGetQuery(con, "SELECT spec, illness, vt FROM chart")}
+      else if(input$y==gh)
+      {dat<-dbGetQuery(con, "SELECT spec, illness, gh FROM chart")}
+      
       experimental<-filter(dat, char=="experimental")
       experimental.a<-filter(experimental, illness=="A") #질병1
       experimental.b<-filter(experimental, illness=="B") #질병2
