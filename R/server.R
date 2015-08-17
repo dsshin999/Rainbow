@@ -186,13 +186,11 @@ shinyServer(function(input, output){
         #gtop<- ggplot(total.ill) + geom_bar(width=.1, stat="identity", position="dodge", aes_string(input$x, input$y))+theme_bw()
         #gbot<- ggplot(total.ill, aes_string(input$x, input$z)) + geom_line(aes(group=char)) +scale_x_discrete(breaks=1:3, labels=c("A", "B", "C"))+geom_point()+theme_bw()
         }
-        
-      if(input$color != "None")
-      {
+     
         g.bottom<-g.bottom+aes(fill=char, color=char) + theme(legend.position="top")
         print(g.bottom, vp=vp1)
         print(g.y, vp=vp2)
-      }
+      
   })
   
   #기간별 평균 걸음수 비교
