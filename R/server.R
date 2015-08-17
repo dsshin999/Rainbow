@@ -252,8 +252,12 @@ shinyServer(function(input, output){
       nam<-input$names
       sqlStatement <- paste("select patient_id FROM patient WHERE name=\'",nam,"\'", sep="")
       id<-dbGetQuery(con, sqlStatement)
-      sqlStatement <- paste("select measuretime, ",val2," FROM chart WHERE patient_id=",id,"")
+      sqlStatement <- paste("select ",val2," FROM chart WHERE measuretime IN(",m3,",",m4,") AND patient_id=",id,"")
       dat<-dbGetQuery(con, sqlStatement)
+      
+      measuretime<-as.character(c(m3, m4))
+      if(m3!=m4)
+      {dat$measuretime<-measuretime}
 
       if(val2=="eq5d")
       {k<-ggplot(dat, aes(x=measuretime, y=eq5d)) + geom_bar(stat="identity", positiion="dodge", fill="light steel blue", width=0.1)+theme_bw()+xlab("time")}
