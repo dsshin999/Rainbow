@@ -14,7 +14,7 @@ shinyServer(function(input, output){
     f<-input$from
     t<-input$to
     #sqlStatement <- paste("select spec, ",x,", ",y," FROM chart WHERE measuretime>=",f," AND measuretime<=",t,"")
-    sqlStatement <- paste("select * from patient where measuretime>=",f," and measuretime<=",t,"")
+    sqlStatement <- paste("select * from chart where measuretime>=",f," and measuretime<=",t,"")
     dat<-dbGetQuery(con, sqlStatement)
     
       if(input$x=="age")
@@ -201,7 +201,7 @@ shinyServer(function(input, output){
     m2<-input$month2
     val<-input$value
     
-    sqlStatement <- paste("select measuretime,",val," FROM patient WHERE measuretime IN(",m1,", ",m2,") AND spec='experimental'")
+    sqlStatement <- paste("select measuretime,",val," FROM chart WHERE measuretime IN(",m1,", ",m2,") AND spec='experimental'")
     dat<-dbGetQuery(con, sqlStatement)
     type1<-filter(dat, measuretime==input$month1)
     type2<-filter(dat, measuretime==input$month2)
@@ -252,7 +252,9 @@ shinyServer(function(input, output){
       m3<-input$month3
       m4<-input$month4
       nam<-input$names
-      sqlStatement <- paste("select measuretime, ",val2," FROM patient WHERE name=\'",nam,"\'", sep="")
+      sqlStatement <- paste("select patient_id FROM patient WHERE name=\'",nam,"\'", sep="")
+      id<-dbGetQuery(con, sqlStatement)
+      sqlStatement <- paste("select measuretime, ",val2," FROM chart WHERE patient_id=",id,"")
       dat<-dbGetQuery(con, sqlStatement)
 
       if(val2=="eq5d")
