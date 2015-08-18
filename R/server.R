@@ -4,7 +4,6 @@ library(ggplot2)
 library(datasets)
 library(RCurl)
 library(RMySQL)
-library(gridExtra)
 
 shinyServer(function(input, output){
   output$plot <- renderPlot({
