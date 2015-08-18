@@ -9,51 +9,56 @@ library(gridExtra)
 shinyServer(function(input, output){
   output$plot <- renderPlot({
     
-    x<-input$x
-    y<-input$y
-    f<-input$from
-    t<-input$to
+    x<-input$x #x축 인덱스를 R 변수에 저장
+    y<-input$y #y축 인덱스를 R 변수에 저장
+    f<-input$from #기간은 언제부터
+    t<-input$to #언제까지
     #sqlStatement <- paste("select spec, ",x,", ",y," FROM chart WHERE measuretime>=",f," AND measuretime<=",t,"")
     sqlStatement <- paste("select * from chart where measuretime>=",f," and measuretime<=",t,"")
     dat<-dbGetQuery(con, sqlStatement)
     
       if(input$x=="age")
       {
+        #실험군을 추출해 나이대로 분류
       experimental<-filter(dat, spec=="experimental")
       experimental.50<-filter(experimental, age<60)
       experimental.60<-filter(experimental, age>=60, age<70)
       experimental.70<-filter(experimental, age>=70, age<80)
       experimental.over<-filter(experimental, age>=80)
+      
+      #비교군을 추출해 나이대로 분류
       comparison<-filter(dat, spec=="comparison")
       comparison.50<-filter(comparison, age<60)
       comparison.60<-filter(comparison, age>=60, age<70)
       comparison.70<-filter(comparison, age>=70, age<80)
       comparison.over<-filter(comparison, age>=80)
       
+      #실험군 나이대별로 각 지표의 평균 내기
       aver.ex.50<-summarise(experimental.50, eq5d=mean(eq5d), stride=mean(stride), mr=mean(mr), vt=mean(vt), pr=mean(pr), gh=mean(gh))
       aver.ex.60<-summarise(experimental.60, eq5d=mean(eq5d), stride=mean(stride), mr=mean(mr), vt=mean(vt), pr=mean(pr), gh=mean(gh))
       aver.ex.70<-summarise(experimental.70, eq5d=mean(eq5d), stride=mean(stride), mr=mean(mr), vt=mean(vt), pr=mean(pr), gh=mean(gh))
       aver.ex.over<-summarise(experimental.over, eq5d=mean(eq5d), stride=mean(stride), mr=mean(mr), vt=mean(vt), pr=mean(pr), gh=mean(gh))
       
-      
+      #대조군 나이대별로 각 지표의 평균내기
       aver.cp.50<-summarise(comparison.50, eq5d=mean(eq5d), stride=mean(stride), mr=mean(mr), vt=mean(vt), pr=mean(pr), gh=mean(gh))
       aver.cp.60<-summarise(comparison.60, eq5d=mean(eq5d), stride=mean(stride), mr=mean(mr), vt=mean(vt), pr=mean(pr), gh=mean(gh))
       aver.cp.70<-summarise(comparison.70, eq5d=mean(eq5d), stride=mean(stride), mr=mean(mr), vt=mean(vt), pr=mean(pr), gh=mean(gh))
       aver.cp.over<-summarise(comparison.over, eq5d=mean(eq5d), stride=mean(stride), mr=mean(mr), vt=mean(vt), pr=mean(pr), gh=mean(gh))
       
       age<-c(50, 60, 70, 80)
+      #대조군 표 만들기
       aver.cp<-rbind(aver.cp.50,aver.cp.60,aver.cp.70,aver.cp.over)
       aver.cp$age<-age
-      
+      #실험군 표 만들기
       aver.ex<-rbind(aver.ex.50,aver.ex.60,aver.ex.70,aver.ex.over)
       aver.ex$age<-age
-      
+      #대조군과 실험군 합쳐진 표 만들기
       char<-c("comparison", "comparison", "comparison", "comparison")
       aver.cp$char<-char
       char<-c("experimental", "experimental","experimental","experimental")
       aver.ex$char<-char
       total.age<-rbind(aver.cp, aver.ex)
-      total.age1<-total.age
+      total.age1<-total.age #오른쪽 y축 지표 때문에 전체 표 복제
       #names(total.age)[1]<-input$y
       total.age$eq5d<-total.age$eq5d*500
       total.age$mr<-total.age$mr*10
@@ -250,14 +255,22 @@ shinyServer(function(input, output){
       m3<-input$month3
       m4<-input$month4
       nam<-input$names
+      
       sqlStatement <- paste("select patient_id FROM patient WHERE name=\'",nam,"\'", sep="")
       id<-dbGetQuery(con, sqlStatement)
-      sqlStatement <- paste("select ",val2," FROM chart WHERE measuretime IN(",m3,",",m4,") AND patient_id=",id,"")
+      sqlStatement <- paste("select ",val2," FROM chart WHERE measuretime>=",m3," AND measuretime<=",m4," AND patient_id=",id,"")
       dat<-dbGetQuery(con, sqlStatement)
       
-      measuretime<-as.character(c(m3, m4))
+      if(m4<m3)
+      {renderPrint("From이 To보다 작아야 합니다. 다시 선택해 주십시오")}
+      
+      else
+      {
+      measuretime<-as.character(c(m3:m4))
       if(m3!=m4)
       {dat$measuretime<-measuretime}
+      else
+      {dat$measuretime<-m3}
 
       if(val2=="eq5d")
       {k<-ggplot(dat, aes(x=measuretime, y=eq5d)) + geom_bar(stat="identity", positiion="dodge", fill="light steel blue", width=0.1)+theme_bw()+xlab("time")}
@@ -273,5 +286,6 @@ shinyServer(function(input, output){
       {k<-ggplot(dat, aes(x=measuretime, y=vt)) + geom_bar(stat="identity", positiion="dodge", fill="light steel blue", width=0.1)+theme_bw()+xlab("time")}
       
       print(k)
+      }
     }
   })})

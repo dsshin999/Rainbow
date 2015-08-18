@@ -42,8 +42,8 @@ navbarPage("Tools for Analyzing Patients Status",
                     headerPanel("Comparing Individual index along to month"),
                     
                     sidebarPanel(
-                      selectInput("month3", "select month", choices=c(1:maximum)),
-                      selectInput("month4", "select month", choices=c(1:maximum), selected = 2),
+                      selectInput("month3", "Period, from :", c(1:maximum)), #추릴 기간 선정
+                      selectInput("month4", "Period, to :", c(1:maximum), selected = 2),
                       selectInput("names", "Name : ", personname),
                       selectInput("value2", "Index :", index)
                     ),
