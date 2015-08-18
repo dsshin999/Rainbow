@@ -65,15 +65,15 @@ shinyServer(function(input, output){
       total.age$pr<-total.age$pr*10
       total.age$gh<-total.age$gh*10
       
+      #축 두개를 가진 그래프를 만드는 부분
       g.bottom <- ggplot(total.age, aes_string(x = input$x, y =input$y)) +
-        geom_bar(stat="identity", position="dodge", width=3) +  #plot flow
-        geom_line(aes_string(y = input$z))+geom_point(aes_string(y=input$z)) +  # plot rain2
-        ## specify our yaxis limits and remove any axis expansion
+        geom_bar(stat="identity", position="dodge", width=3) +  #plot bar
+        geom_line(aes_string(y = input$z))+geom_point(aes_string(y=input$z)) +  # plot line
         labs(x = "age", y = input$y) +
         theme_classic() +
         theme(plot.background = element_rect(fill = "transparent"),
               plot.margin = unit(c(2,0,1,1),units="lines"))
-      
+      #dummy graph
       g.y <- ggplot(total.age1, aes_string(x = input$x, y = input$z)) +
         theme_classic() + 
         geom_line(colour = "transparent") +
@@ -112,24 +112,30 @@ shinyServer(function(input, output){
       }
       
       else{
+        #illness기준으로 정렬할 때
+        #실험군 별로 정렬
         experimental<-filter(dat, spec=="experimental")
         experimental.a<-filter(experimental, illness=="A") #질병1
         experimental.b<-filter(experimental, illness=="B") #질병2
         experimental.c<-filter(experimental, illness=="C") #질병3
+        
+        #대조군별로 정렬
         comparison<-filter(dat, spec=="comparison")
         comparison.a<-filter(comparison, illness=="A") #질병1
         comparison.b<-filter(comparison, illness=="B") #질병2
         comparison.c<-filter(comparison, illness=="C") #질병3
         
+        #실험군 평균
         aver.ex.a<-summarise(experimental.a, eq5d=mean(eq5d), stride=mean(stride), mr=mean(mr), vt=mean(vt), pr=mean(pr), gh=mean(gh))
         aver.ex.b<-summarise(experimental.b, eq5d=mean(eq5d), stride=mean(stride), mr=mean(mr), vt=mean(vt), pr=mean(pr), gh=mean(gh))
         aver.ex.c<-summarise(experimental.c, eq5d=mean(eq5d), stride=mean(stride), mr=mean(mr), vt=mean(vt), pr=mean(pr), gh=mean(gh))
         
+        #대조군 평균
         aver.cp.a<-summarise(comparison.a, eq5d=mean(eq5d), stride=mean(stride), mr=mean(mr), vt=mean(vt), pr=mean(pr), gh=mean(gh))
         aver.cp.b<-summarise(comparison.b, eq5d=mean(eq5d), stride=mean(stride), mr=mean(mr), vt=mean(vt), pr=mean(pr), gh=mean(gh))
         aver.cp.c<-summarise(comparison.c, eq5d=mean(eq5d), stride=mean(stride), mr=mean(mr), vt=mean(vt), pr=mean(pr), gh=mean(gh))
         
-        
+        #표만들기
         aver.cp<-rbind(aver.cp.a,aver.cp.b,aver.cp.c)
         aver.cp$illness<-c("A","B","C")
         aver.cp
@@ -140,6 +146,7 @@ shinyServer(function(input, output){
         aver.cp$char<-char
         char<-c("experimental", "experimental","experimental")
         aver.ex$char<-char
+        #각 지표들이 stride 기준으로 같은 평면에 뿌려졌을 때 보기 괜찮도록 지표 값을 띄움(축은 원래 값대로 보임)
         total.ill<-rbind(aver.cp, aver.ex)
         total.ill1<-total.ill
         total.ill$eq5d<-total.ill$eq5d*500
@@ -148,9 +155,10 @@ shinyServer(function(input, output){
         total.ill$pr<-total.ill$pr*10
         total.ill$gh<-total.ill$gh*10
        
+        #그래프 만들기
         g.bottom <- ggplot(total.ill, aes_string(x = input$x, y =input$y)) +
-          geom_bar(stat="identity", position="dodge", width=.1) +  #plot flow
-          geom_line(aes_string(y = input$z))+aes(group=char)+geom_point(aes_string(y=input$z)) +  # plot rain2
+          geom_bar(stat="identity", position="dodge", width=.2) +  #plot bar
+          geom_line(aes_string(y = input$z))+aes(group=char)+geom_point(aes_string(y=input$z)) +  # plot line
           ## specify our yaxis limits and remove any axis expansion
           labs(x = "Illness", y = input$y) +
           theme_classic() +
@@ -197,7 +205,7 @@ shinyServer(function(input, output){
       
   })
   
-  #기간별 평균 걸음수 비교
+  #대조군의 기간별 평균 걸음수 비교
   output$plot2 <- renderPlot({
     m1<-input$month1
     m2<-input$month2
@@ -205,9 +213,12 @@ shinyServer(function(input, output){
     
     sqlStatement <- paste("select measuretime,",val," FROM chart WHERE measuretime IN(",m1,", ",m2,") AND spec='experimental'")
     dat<-dbGetQuery(con, sqlStatement)
+    
+    #기간별로 분류
     type1<-filter(dat, measuretime==input$month1)
     type2<-filter(dat, measuretime==input$month2)
     
+    #각 기간에서의 지표들 평균
     if(val=="stride")
     {sum1<-summarise(type1, stride=mean(stride))
     sum2<-summarise(type2, stride=mean(stride))}
@@ -226,7 +237,7 @@ shinyServer(function(input, output){
     else if(val=="gh")
     {sum1<-summarise(type1, gh=mean(gh))
     sum2<-summarise(type2, gh=mean(gh))}
-    
+    #표만들기
     sum<-rbind(sum1, sum2)
     time<-c(m1,m2)
     monthly<-data.frame(sum, time)
@@ -260,7 +271,7 @@ shinyServer(function(input, output){
       sqlStatement <- paste("select ",val2," FROM chart WHERE measuretime>=",m3," AND measuretime<=",m4," AND patient_id=",id,"")
       dat<-dbGetQuery(con, sqlStatement)
       
-      if(m4<m3)
+      if(m4<m3) #만약에 from이 to 보다 클 경우 그래프를 출력하지 않는다.
       {renderPrint("From이 To보다 작아야 합니다. 다시 선택해 주십시오")}
       
       else
@@ -268,9 +279,9 @@ shinyServer(function(input, output){
       measuretime<-as.character(c(m3:m4))
       if(m3!=m4)
       {dat$measuretime<-measuretime}
-      else
+      else #from & to가 같은 경우
       {dat$measuretime<-m3}
-
+      #그래프 출력
       if(val2=="eq5d")
       {k<-ggplot(dat, aes(x=measuretime, y=eq5d)) + geom_bar(stat="identity", positiion="dodge", fill="light steel blue", width=0.1)+theme_bw()+xlab("time")}
       else if(val2=="stride")
